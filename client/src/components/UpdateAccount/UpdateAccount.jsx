@@ -1,14 +1,26 @@
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import * as actions from "../../redux/actions";
 
 const UpdateAccount = ({ account, onClose, onSuccess }) => {
   const dispatch = useDispatch();
-  // Khởi tạo formData với account, nếu date không hợp lệ thì đặt về Date.now()
+
+  // Khởi tạo formData với account
   const [formData, setFormData] = useState({
-    ...account,
-    date: account.date ? account.date : Date.now(), // Đặt về thời gian hiện tại nếu không có date
+    idTiktok: "",
+    accountGoogle: "",
+    date: Date.now(),
+    pertain: "0",
   });
+
+  useEffect(() => {
+    if (account) {
+      setFormData({
+        ...account,
+        date: account.date || Date.now(), // Đặt về thời gian hiện tại nếu không có date
+      });
+    }
+  }, [account]);
 
   const formatDate = (timeStamp) => {
     const date = new Date(timeStamp);
@@ -26,27 +38,32 @@ const UpdateAccount = ({ account, onClose, onSuccess }) => {
     }));
   };
 
+  const isDateValid = (timeStamp) => {
+    const inputDate = new Date(timeStamp);
+    const currentDate = new Date();
+    return inputDate <= currentDate;
+  };
+
   const handleSubmit = useCallback(
     (e) => {
       e.preventDefault();
       const timeStamp = new Date(formData.date).getTime();
-      const inputDate = new Date(timeStamp);
-      const currentDate = new Date();
 
-      if (inputDate > currentDate) {
+      if (!isDateValid(timeStamp)) {
         alert("Ngày không được lớn hơn ngày hiện tại.");
         return;
       }
 
-      const newformData = {
+      const newFormData = {
         ...formData,
         date: timeStamp,
       };
-      dispatch(actions.updateAccount.updateAccountRequest(newformData));
+
+      dispatch(actions.updateAccount.updateAccountRequest(newFormData));
       onSuccess();
       onClose();
     },
-    [formData, dispatch, onSuccess, onClose]
+    [formData, dispatch, onClose]
   );
 
   const handleCancel = () => {
@@ -85,7 +102,7 @@ const UpdateAccount = ({ account, onClose, onSuccess }) => {
             onChange={handleChange}
           />
           <input
-            type="email"
+            type="text"
             name="accountGoogle"
             className="w-full h-[36px] border-[1px] border-cl-border-input rounded-[5px] px-[5px] text-[0.8rem] mt-[20px]"
             placeholder="Nhập account Google..."

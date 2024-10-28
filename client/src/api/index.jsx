@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const URL = "http://localhost:5000";
+const URL = "http://localhost:3000";
 
 export const fetchAccounts = () => axios.get(`${URL}/accounts`);
 export const createAccount = (payload) =>

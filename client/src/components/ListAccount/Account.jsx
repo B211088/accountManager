@@ -8,11 +8,6 @@ const Account = ({ account, index, onEdit }) => {
   const timeDifference = currentDate - account.date;
   const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 
-  const newDataAccount = {
-    ...account,
-    date: daysDifference,
-  };
-
   const dispatch = useDispatch();
   const [isModify, setIsModify] = useState(false);
   const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false);
@@ -46,6 +41,15 @@ const Account = ({ account, index, onEdit }) => {
     onEdit();
   };
 
+  const handleResetTime = useCallback(() => {
+    const newDataAccount = {
+      ...account,
+      date: currentDate,
+    };
+    dispatch(actions.updateAccount.updateAccountRequest(newDataAccount));
+    onEdit();
+  }, [account]);
+
   const handleClickOutside = (e) => {
     if (modalRef.current && !modalRef.current.contains(e.target)) {
       setIsOpenUpdateModal(false);
@@ -62,7 +66,7 @@ const Account = ({ account, index, onEdit }) => {
 
   return (
     <div
-      className="w-full h-full flex flex-wrap items-center justify-between bg-bg-light border-[1px] rounded-[5px] border-cl-border px-[10px] gap-[10px] cursor-pointer relative"
+      className="w-full h-full max-h-[150px] sm:h-[68px] flex flex-wrap items-center justify-between  bg-bg-light border-[1px] rounded-[5px] border-cl-border px-[10px] gap-[10px] cursor-pointer relative"
       onClick={() => {
         setIsModify(false);
         setIsOpenUpdateModal(false);
@@ -128,6 +132,16 @@ const Account = ({ account, index, onEdit }) => {
                   onClick={handleDeleteAccount}
                 >
                   Xóa
+                </li>
+                <li
+                  className="relative h-[30px] hover:bg-bg-btn-hover bg-bg-light"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsModify(false);
+                    handleResetTime();
+                  }}
+                >
+                  Đặt lại thời gian
                 </li>
               </ul>
             </div>

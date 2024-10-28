@@ -81,7 +81,7 @@ const AddAcount = ({ onClose, onSuccess }) => {
           />
 
           <input
-            type="email"
+            type="text"
             name="accountGoogle"
             className="w-full h-[36px] border-[1px] border-cl-border-input rounded-[5px] px-[5px] text-[0.8rem] mt-[20px]"
             placeholder="Nhập account Google..."
