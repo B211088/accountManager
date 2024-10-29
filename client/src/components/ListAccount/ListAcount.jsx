@@ -1,29 +1,24 @@
-import Account from "./Account";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
 import * as actions from "../../redux/actions";
 import { accountsState$ } from "../../redux/selector";
+import Account from "./Account";
 
-const ListAccount = ({ refreshList }) => {
+const ListAccount = ({ refreshList, onEdit }) => {
   const dispatch = useDispatch();
   const accounts = useSelector(accountsState$);
-  const [accountList, setAccountList] = useState(accounts);
+  const [accountList, setAccountList] = useState(accounts || []);
   const [sortOption, setSortOption] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [filterMachine, setFilterMachine] = useState("");
 
   useEffect(() => {
     dispatch(actions.getAccounts.getAccountsRequest());
-  }, [dispatch]);
+  }, [dispatch, refreshList]);
 
   useEffect(() => {
-    setAccountList(accounts);
+    setAccountList(accounts || []);
   }, [accounts]);
-
-  const handleRefreshList = () => {
-    refreshList();
-    dispatch(actions.getAccounts.getAccountsRequest());
-  };
 
   const sortAccounts = (accountsToSort) => {
     return [...accountsToSort].sort((a, b) => {
@@ -53,11 +48,11 @@ const ListAccount = ({ refreshList }) => {
     setSearchTerm(e.target.value.toLowerCase());
   };
 
-  const handleMachineFilterChange = (e) => {
+  const handleFilterMachineChange = (e) => {
     setFilterMachine(e.target.value);
   };
 
-  const filteredAccounts = accountList.filter((account) => {
+  const filteredAccounts = accountList?.filter((account) => {
     const matchesSearch =
       account.idTiktok?.toLowerCase().includes(searchTerm) ||
       account.accountGoogle?.toLowerCase().includes(searchTerm);
@@ -70,33 +65,26 @@ const ListAccount = ({ refreshList }) => {
   const sortedAccounts = sortAccounts(filteredAccounts);
 
   return (
-    <div className="w-full sm:w-[90%] min-w-[410px] flex flex-col items-center relative z-[1] px-[10px]">
+    <div className="w-full sm:w-[90%] min-w-[360px] flex flex-col items-center relative z-[1] px-[10px]">
       <div className="w-full flex items-center justify-between flex-wrap mt-[30px] py-[10px] px-[10px] bg-bg-light border-[1px] rounded-[5px] border-cl-border">
-        <div className="flex items-center justify-between sm:justify-start sm:w-[30%] w-full h-[50px] leading-[50px]">
-          <h1 className="mr-[20px] w-[120px]">
-            Số lượng acc: {sortedAccounts.length}
-          </h1>
+        <div className="sm:flex-1  w-full h-[50px] flex items-center justify-between sm:justify-start gap-[20px]">
+          <h1>Số lượng acc: {filteredAccounts.length}</h1>
+
           <select
             id="filterMachine"
             value={filterMachine}
-            onChange={handleMachineFilterChange}
-            className="border rounded-[2px] w-[38%] max-w-[200px] text-[0.9rem] px-[5px] h-[34px]"
+            onChange={handleFilterMachineChange}
+            className="border rounded-[2px]  w-[38%] sm:w-[120px]   max-w-[200px] text-[0.9rem] px-[5px] h-[34px]"
           >
-            <option value="">Tất cả máy</option>
-            {Array.from({ length: 16 }, (_, i) => (
-              <option key={i + 1} value={(i + 1).toString()}>
-                Máy {i + 1}
+            <option value="0">Chọn Máy</option>
+            {Array.from({ length: 16 }, (_, index) => (
+              <option key={index} value={index + 1}>
+                Máy {index + 1}
               </option>
             ))}
           </select>
         </div>
-        <div className="sm:w-[70%] w-full flex items-center sm:justify-end h-[50px] justify-between">
-          <label
-            htmlFor="search"
-            className="mr-[5px] min-w-[80px] leading-[50px] hidden sm:block"
-          >
-            Tìm kiếm:
-          </label>
+        <div className="sm:flex-1 w-full flex items-center sm:justify-end h-[50px] justify-between gap-[5px] sm:gap-[20px]">
           <input
             type="text"
             id="search"
@@ -105,9 +93,7 @@ const ListAccount = ({ refreshList }) => {
             placeholder="Nhập ID TikTok hoặc Email"
             className="border w-[60%] max-w-[360px] rounded-[2px] text-[0.9rem] px-[5px] h-[34px]"
           />
-          <label htmlFor="sortOption" className="ml-4 mr-[5px] hidden sm:block">
-            Sắp xếp:
-          </label>
+
           <select
             id="sortOption"
             value={sortOption}
@@ -128,11 +114,12 @@ const ListAccount = ({ refreshList }) => {
         style={{ height: "calc(100vh - 224px)" }}
       >
         {sortedAccounts.length > 0 ? (
-          sortedAccounts.map((account) => (
+          sortedAccounts.map((account, index) => (
             <Account
               key={account._id}
+              index={index}
               account={account}
-              onEdit={handleRefreshList}
+              onEdit={onEdit}
             />
           ))
         ) : (

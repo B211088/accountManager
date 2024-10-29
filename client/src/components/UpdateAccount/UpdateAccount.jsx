@@ -2,10 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import * as actions from "../../redux/actions";
 
-const UpdateAccount = ({ account, onClose, onSuccess }) => {
+const UpdateAccount = ({ account, onClose, onCancel, submitSucces }) => {
   const dispatch = useDispatch();
 
-  // Khởi tạo formData với account
   const [formData, setFormData] = useState({
     idTiktok: "",
     accountGoogle: "",
@@ -17,7 +16,7 @@ const UpdateAccount = ({ account, onClose, onSuccess }) => {
     if (account) {
       setFormData({
         ...account,
-        date: account.date || Date.now(), // Đặt về thời gian hiện tại nếu không có date
+        date: account.date || Date.now(),
       });
     }
   }, [account]);
@@ -60,26 +59,21 @@ const UpdateAccount = ({ account, onClose, onSuccess }) => {
       };
 
       dispatch(actions.updateAccount.updateAccountRequest(newFormData));
-      onSuccess();
       onClose();
+      submitSucces();
     },
     [formData, dispatch, onClose]
   );
-
-  const handleCancel = () => {
-    onSuccess();
-    onClose();
-  };
-
   const handleOverlayClick = (e) => {
+    e.stopPropagation();
     if (e.target === e.currentTarget) {
-      onClose();
+      onCancel();
     }
   };
 
   return (
     <div
-      className="fixed flex items-center justify-center top-0 right-0 left-0 bottom-0 bg-bg-overlay z-[2]"
+      className="fixed flex items-center justify-center top-0 right-0 left-0 bottom-0 bg-bg-overlay z-[2] px-[8px]"
       onClick={handleOverlayClick}
     >
       <div
@@ -123,7 +117,7 @@ const UpdateAccount = ({ account, onClose, onSuccess }) => {
             onChange={handleChange}
           >
             <option value="0">Chưa Đăng nhập trên máy nào</option>
-            {Array.from({ length: 15 }, (_, index) => (
+            {Array.from({ length: 16 }, (_, index) => (
               <option key={index} value={index + 1}>
                 Máy {index + 1}
               </option>
@@ -139,7 +133,7 @@ const UpdateAccount = ({ account, onClose, onSuccess }) => {
             <button
               type="button"
               className="w-full h-[36px] mt-[10px] bg-bg-light rounded-[5px] border-[1px] border-cl-border-input text-[1rem] text-text-dark font-bold"
-              onClick={handleCancel}
+              onClick={onClose}
             >
               Hủy
             </button>

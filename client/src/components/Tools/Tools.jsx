@@ -9,7 +9,7 @@ const Tools = ({ onClick }) => {
 
   return (
     <div
-      className="absolute w-[60px] h-[60px] bg-bg-btn-light rounded-[50%] bottom-[80px] right-[20px] text-center text-[1.4rem] leading-[60px] text-text-light cursor-pointer  z-10"
+      className="absolute w-[60px] h-[60px] bg-bg-btn-light rounded-[50%] bottom-[120px] right-[20px] text-center text-[1.4rem] leading-[60px] text-text-light cursor-pointer  z-10"
       // Gọi hàm onClick được truyền vào khi click
     >
       <div
