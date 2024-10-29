@@ -43,6 +43,10 @@ const Account = ({ account, index, onEdit }) => {
     [dispatch, account]
   );
 
+  const toggleActionMenu = (e) => {
+    e.stopPropagation();
+    setIsActionMenuOpen(!isActionMenuOpen);
+  };
   const handleResetTime = useCallback(() => {
     const newDataAccount = {
       ...account,
@@ -51,11 +55,6 @@ const Account = ({ account, index, onEdit }) => {
     dispatch(actions.updateAccount.updateAccountRequest(newDataAccount));
     onEdit();
   }, [account]);
-
-  const toggleActionMenu = (e) => {
-    e.stopPropagation();
-    setIsActionMenuOpen(!isActionMenuOpen);
-  };
 
   const handleClickOutside = (e) => {
     if (modalRef.current && !modalRef.current.contains(e.target)) {
