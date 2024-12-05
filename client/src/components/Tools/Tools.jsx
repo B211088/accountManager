@@ -8,7 +8,7 @@ const Tools = ({ openAddAccount, onOpentUploadFile, onOpentDownloadFile }) => {
   };
 
   return (
-    <div className="fixed w-[60px] h-[60px] bg-bg-btn-light rounded-[50%] bottom-[120px] right-[20px] text-center text-[1.4rem] leading-[60px] text-text-light cursor-pointer  z-10">
+    <div className="fixed w-[60px] h-[60px] bg-bg-btn-light rounded-[50%] bottom-[70px] right-[20px] text-center text-[1.4rem] leading-[60px] text-text-light cursor-pointer  z-10">
       <div
         className="w-full h-[60px] relative"
         onClick={onChangeStatusAddButton}

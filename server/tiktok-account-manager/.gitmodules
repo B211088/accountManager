@@ -1,3 +1,0 @@
-[submodule "server/tiktok-account-manager"]
-    path = server/tiktok-account-manager
-    url = https://github.com/B211088/tiktokaccountmanager.git

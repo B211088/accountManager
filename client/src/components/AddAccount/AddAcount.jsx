@@ -61,7 +61,7 @@ const AddAcount = ({ onClose, submitSucces }) => {
 
   return (
     <div
-      className="fixed flex items-center justify-center top-0 right-0 left-0 bottom-0 bg-bg-overlay z-[2] px-[8px]"
+      className="fixed flex items-center justify-center top-0 right-0 left-0 bottom-0 bg-bg-overlay z-10 px-[8px]"
       onClick={handleOverlayClick}
     >
       <div className="w-[400px] h-[430px] flex flex-col items-center bg-bg-light z-6 rounded-[5px] opacity-1 p-[10px] z-[3]">
