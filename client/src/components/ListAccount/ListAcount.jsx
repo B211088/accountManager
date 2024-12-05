@@ -1,20 +1,57 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as actions from "../../redux/actions";
 import { accountsState$ } from "../../redux/selector";
 import Account from "./Account";
+import AddAcount from "../AddAccount/AddAcount";
+import Tools from "../Tools/Tools";
 
-const ListAccount = ({ refreshList, onEdit }) => {
+import ModalUploadFile from "../Modal/ModalUploadFile";
+import ModalDownLoadFile from "../Modal/ModalDownLoadFile";
+
+const ListAccount = () => {
   const dispatch = useDispatch();
   const accounts = useSelector(accountsState$);
   const [accountList, setAccountList] = useState(accounts || []);
   const [sortOption, setSortOption] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [filterMachine, setFilterMachine] = useState("");
+  const [selectedAccounts, setSelectedAccounts] = useState([]);
+  const [statusAddAccount, setStatusAddAccount] = useState(false);
+  const [statusUploadFile, setStatusUploadFile] = useState(false);
+  const [statusDownloadFile, setStatusDownloadFile] = useState(false);
+  const [refreshList, setRefreshList] = useState(false);
+
+  const changeStatusAddAccount = () => {
+    setStatusAddAccount(!statusAddAccount);
+  };
+
+  const changeStatusModalUploadFile = () => {
+    setStatusUploadFile(!statusUploadFile);
+  };
+
+  const changeStatusModalDowloadFile = () => {
+    setStatusDownloadFile(!statusDownloadFile);
+  };
+
+  const handleAddAccountSubmit = () => {
+    setStatusAddAccount(false);
+    handleRefreshList();
+  };
+
+  const [edit, setEdit] = useState(false);
+
+  const handleRefreshList = () => {
+    setEdit((prev) => !prev);
+  };
+
+  const handleRefreshListAdd = () => {
+    setRefreshList((prev) => !prev);
+  };
 
   useEffect(() => {
     dispatch(actions.getAccounts.getAccountsRequest());
-  }, [dispatch, refreshList]);
+  }, [dispatch, refreshList, edit]);
 
   useEffect(() => {
     setAccountList(accounts || []);
@@ -52,6 +89,16 @@ const ListAccount = ({ refreshList, onEdit }) => {
     setFilterMachine(e.target.value);
   };
 
+  const handleSelectAccount = (accountId) => {
+    setSelectedAccounts((prev) => {
+      if (prev.includes(accountId)) {
+        return prev.filter((id) => id !== accountId);
+      } else {
+        return [...prev, accountId];
+      }
+    });
+  };
+
   const filteredAccounts = accountList?.filter((account) => {
     const matchesSearch =
       account.idTiktok?.toLowerCase().includes(searchTerm) ||
@@ -68,7 +115,9 @@ const ListAccount = ({ refreshList, onEdit }) => {
     <div className="w-full sm:w-[90%] min-w-[360px] flex flex-col items-center relative z-[1] px-[10px]">
       <div className="w-full flex items-center justify-between flex-wrap mt-[30px] py-[10px] px-[10px] bg-bg-light border-[1px] rounded-[5px] border-cl-border">
         <div className="sm:flex-1  w-full h-[50px] flex items-center justify-between sm:justify-start gap-[20px]">
-          <h1>Số lượng acc: {filteredAccounts.length}</h1>
+          <h1 className="min-w-[130px]">
+            Số lượng acc: {filteredAccounts.length}
+          </h1>
 
           <select
             id="filterMachine"
@@ -76,7 +125,7 @@ const ListAccount = ({ refreshList, onEdit }) => {
             onChange={handleFilterMachineChange}
             className="border rounded-[2px]  w-[38%] sm:w-[120px]   max-w-[200px] text-[0.9rem] px-[5px] h-[34px]"
           >
-            <option value="0">Chọn Máy</option>
+            <option value="">Tất cả</option> {/* Chọn tất cả */}
             {Array.from({ length: 16 }, (_, index) => (
               <option key={index} value={index + 1}>
                 Máy {index + 1}
@@ -119,13 +168,36 @@ const ListAccount = ({ refreshList, onEdit }) => {
               key={account._id}
               index={index}
               account={account}
-              onEdit={onEdit}
+              onEdit={handleRefreshList}
+              isSelected={selectedAccounts.includes(account._id)}
+              onSelect={handleSelectAccount}
             />
           ))
         ) : (
           <div className="text-center text-gray-500">
             Không thể tìm thấy tài khoản nào {":(("}
           </div>
+        )}
+        <Tools
+          openAddAccount={changeStatusAddAccount}
+          onOpentUploadFile={changeStatusModalUploadFile}
+          onOpentDownloadFile={changeStatusModalDowloadFile}
+        />
+        {statusAddAccount && (
+          <AddAcount
+            onClose={handleAddAccountSubmit}
+            submitSucces={handleRefreshListAdd}
+          />
+        )}
+
+        {statusUploadFile && (
+          <ModalUploadFile onClose={() => changeStatusModalUploadFile(false)} />
+        )}
+
+        {statusDownloadFile && (
+          <ModalDownLoadFile
+            onClose={() => changeStatusModalDowloadFile(false)}
+          />
         )}
       </div>
     </div>

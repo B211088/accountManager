@@ -18,6 +18,8 @@ export default {
       "bg-overlay": "rgb(94, 94, 94, 0.7)",
       "hv-item": "rgb(231, 231, 231)",
       "cl-border-input": "#919191",
+      "btn-upload": "#4284f5",
+      "btn-dowload": "#db2a2a",
     },
   },
   plugins: [],

@@ -17,7 +17,7 @@ const Account = ({ account, index, onEdit }) => {
   const [data, setData] = useState(account);
 
   useEffect(() => {
-    setData(account);
+    setData(data);
   }, [account]);
 
   const handleChangModalUpdate = () => {
@@ -40,7 +40,7 @@ const Account = ({ account, index, onEdit }) => {
         onEdit();
       }
     },
-    [dispatch, account]
+    [dispatch, account, onEdit]
   );
 
   const toggleActionMenu = (e) => {
