@@ -8,6 +8,8 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
+import cron from "node-cron";
+import axios from "axios";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -89,3 +91,12 @@ mongoose
   .catch((err) => {
     console.log("Error connecting to the database: ", err);
   });
+
+cron.schedule("*/5 * * * *", async () => {
+  try {
+    const response = await axios.get(`http://localhost:${PORT}/ping`);
+    console.log("Ping tự gửi thành công:", response.status);
+  } catch (error) {
+    console.error("Ping tự gửi thất bại:", error.message);
+  }
+});
