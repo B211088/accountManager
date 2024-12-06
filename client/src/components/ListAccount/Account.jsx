@@ -12,7 +12,8 @@ const Account = ({ account, index, onEdit }) => {
   const dispatch = useDispatch();
   const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false);
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
-  const modalRef = useRef(null);
+  const actionButtonRef = useRef(null);
+  const menuRef = useRef(null);
 
   const [data, setData] = useState(account);
 
@@ -26,7 +27,7 @@ const Account = ({ account, index, onEdit }) => {
 
   const handleCancelModalUpdate = (e) => {
     setIsOpenUpdateModal(!isOpenUpdateModal);
-    e.stopPropagation;
+    e.stopPropagation();
   };
 
   const handleDeleteAccount = useCallback(
@@ -45,8 +46,9 @@ const Account = ({ account, index, onEdit }) => {
 
   const toggleActionMenu = (e) => {
     e.stopPropagation();
-    setIsActionMenuOpen(!isActionMenuOpen);
+    setIsActionMenuOpen((prev) => !prev);
   };
+
   const handleResetTime = useCallback(() => {
     const newDataAccount = {
       ...account,
@@ -57,9 +59,14 @@ const Account = ({ account, index, onEdit }) => {
   }, [account]);
 
   const handleClickOutside = (e) => {
-    if (modalRef.current && !modalRef.current.contains(e.target)) {
-      setIsOpenUpdateModal(false);
+    if (
+      menuRef.current &&
+      !menuRef.current.contains(e.target) &&
+      actionButtonRef.current &&
+      !actionButtonRef.current.contains(e.target)
+    ) {
       setIsActionMenuOpen(false);
+      setIsOpenUpdateModal(false);
     }
   };
 
@@ -72,27 +79,27 @@ const Account = ({ account, index, onEdit }) => {
 
   return (
     <div
-      className="w-full h-full max-h-[150px] sm:h-[68px] flex flex-wrap items-center justify-between  bg-bg-light border-[1px] rounded-[5px] border-cl-border px-[10px] gap-[10px] cursor-pointer relative "
+      className="w-full h-full max-h-[150px] sm:h-[68px] flex flex-wrap items-center justify-between bg-bg-light border-[1px] rounded-[5px] border-cl-border px-[10px] gap-[10px]  relative py-[5px]"
       onClick={() => {
         setIsOpenUpdateModal(false);
         setIsActionMenuOpen(false);
       }}
     >
-      <div className="w-[30px] min-w-[30px] rounded-[5px] border-cl-border border-[1px] text-center font-bold leading-[26px]">
-        {index + 1}
+      <div className="w-[30px] min-w-[30px] h-[30px] flex items-center justify-center rounded-[5px] border-cl-border border-[1px] text-center font-bold ">
+        <span>{index + 1}</span>
       </div>
-      <div className="flex min-w-[230px] sm:max-w-[80%] sm:flex-row flex-col flex-1  justify-center items-center flex-wrap text-left">
-        <div className="flex-1 sm:w-[20%] w-full min-w-[150px] sm:h-[68px] sm:leading-[68px] h-[20px] font-bold px-[5px] leading-[30px] text-[0.8rem] overflow-hidden whitespace-nowrap text-ellipsis">
+      <div className="flex min-w-[230px] sm:max-w-[80%] sm:flex-row flex-col flex-1 justify-center items-center flex-wrap text-left">
+        <div className="flex-1 sm:w-[20%] w-full min-w-[150px] sm:py-[20px] py-[5px] font-bold px-[5px] text-[0.8rem] overflow-hidden whitespace-nowrap text-ellipsis">
           IDTIKTOK: {account.idTiktok}
         </div>
-        <div className="flex-1 sm:w-[50%] w-full min-w-[40%] sm:h-[68px] sm:leading-[68px] h-[60px] font-bold px-[5px] leading-[30px] text-[0.8rem] sm:overflow-hidden sm:whitespace-nowrap text-ellipsis break-words">
+        <div className="flex-1 sm:w-[50%] w-full min-w-[40%] sm:py-[20px] py-[5px] font-bold px-[5px] text-[0.8rem] sm:overflow-hidden sm:whitespace-nowrap text-ellipsis break-words">
           Google Account: {account.accountGoogle}
         </div>
 
-        <div className="flex-1 sm:w-[20%] w-full min-w-[60px] sm:h-[68px] sm:leading-[68px] h-[30px] font-bold px-[5px] leading-[30px] text-[0.8rem] overflow-hidden whitespace-nowrap text-ellipsis">
+        <div className="flex-1 sm:w-[20%] w-full min-w-[60px] sm:py-[20px] py-[5px] font-bold px-[5px] text-[0.8rem] overflow-hidden whitespace-nowrap text-ellipsis">
           Ngày: {daysDifference}
         </div>
-        <div className="flex-1 sm:w-[20%] w-full min-w-[160px] sm:h-[68px] sm:leading-[68px] h-[30px] font-bold px-[5px] leading-[30px] text-[0.8rem]">
+        <div className="flex-1 sm:w-[20%] w-full min-w-[160px] sm:py-[20px] py-[5px] font-bold px-[5px] text-[0.8rem]">
           Máy:{" "}
           {account.pertain == null || account.pertain === 0
             ? "Chưa đăng nhập"
@@ -106,9 +113,13 @@ const Account = ({ account, index, onEdit }) => {
           }`}
         ></div>
       </div>
-      <div className="min-w-[30px] rounded-[5px] border-cl-border border-[1px] text-center font-bold leading-[26px] text-[1.2rem] relative">
+      <div
+        ref={menuRef}
+        className="min-w-[30px] rounded-[5px] border-cl-border border-[1px] text-center font-bold text-[1.2rem] relative"
+      >
         <div
-          className="w-[30px] h-[30px] leading-[30px] relative"
+          ref={actionButtonRef}
+          className="w-[30px] h-[30px] relative"
           onClick={toggleActionMenu}
         >
           <i className="fa-solid fa-ellipsis-vertical"></i>
