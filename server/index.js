@@ -80,6 +80,10 @@ app.get("/files", (req, res) => {
   });
 });
 
+app.get("/ping", (req, res) => {
+  res.status(200).send("Ping thành công!");
+});
+
 mongoose
   .connect(URI)
   .then(() => {
@@ -92,7 +96,7 @@ mongoose
     console.log("Error connecting to the database: ", err);
   });
 
-cron.schedule("*/5 * * * *", async () => {
+cron.schedule("*/1 * * * *", async () => {
   try {
     const response = await axios.get(`http://localhost:${PORT}/ping`);
     console.log("Ping tự gửi thành công:", response.status);
